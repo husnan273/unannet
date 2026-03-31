@@ -100,22 +100,23 @@
         import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
         // --- 1. GANTI DENGAN FIREBASE CONFIG KAMU ---
-        const firebaseConfig = {
-            apiKey: "PASTE_DISINI",
-            authDomain: "PASTE_DISINI",
-            databaseURL: "PASTE_DISINI",
-            projectId: "PASTE_DISINI",
-            storageBucket: "PASTE_DISINI",
-            messagingSenderId: "PASTE_DISINI",
-            appId: "PASTE_DISINI"
-        };
+       // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
+  authDomain: "ffca-chat.firebaseapp.com",
+  projectId: "ffca-chat",
+  storageBucket: "ffca-chat.firebasestorage.app",
+  messagingSenderId: "893006406369",
+  appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0",
+  measurementId: "G-4GXJLEDT7E"
+};
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const chatRef = ref(db, "chats");
 
         // --- 2. GANTI DENGAN WEB APP URL GOOGLE APPS SCRIPT KAMU ---
-        const sheetURL = 'https://script.google.com/macros/s/GANTI_DI_SINI/exec';
+        const sheetURL = 'https://script.google.com/macros/s/AKfycbxppKiLsiJ0OPm4WmEQOi4DgPH_MXLPsIEhm7NeLAD1UCCI479fIkAGeHbjBv6MNJHkQA/exec';
 
         // Navigasi Halaman
         window.showPage = function(pageId) {
