@@ -85,19 +85,21 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        const firebaseConfig = {apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
+        const firebaseConfig = {
+  apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
   authDomain: "ffca-chat.firebaseapp.com",
   databaseURL: "https://ffca-chat-default-rtdb.firebaseio.com",
   projectId: "ffca-chat",
   storageBucket: "ffca-chat.firebasestorage.app",
   messagingSenderId: "893006406369",
   appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0",
-  measurementId: "G-4GXJLEDT7E" };
+  measurementId: "G-4GXJLEDT7E"
+};
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const chatRef = ref(db, "chats");
 
-        const sheetURL = 'https://script.google.com/macros/s/AKfycbxQJNtx2U7jHa7H0kyj4Wa5DIrUb27SgrG414v3_Dn7Kl-CDZsAzburHOiAoJHdddw/exec';
+        const sheetURL = 'https://script.google.com/macros/s/AKfycbxHeGviAYwQyAv4AanTpaOvx15sVTyCE6zn9OPGq7KIOHeEenZM25czrr9zNfBu0cm14w/exec';
 
         // Toggle Login vs Regis
         window.toggleAuth = function() {
