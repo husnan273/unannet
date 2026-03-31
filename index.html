@@ -3,58 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FFCA - Member Portal & Chat</title>
+    <title>FFCA Leaderboard & Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: sans-serif; background: #000; color: #fff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .box { background: #1a1a1a; border: 2px solid #ffcc00; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; margin-bottom: 20px; }
-        h2 { color: #ffcc00; text-align: center; text-transform: uppercase; }
-        input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; box-sizing: border-box; }
-        button { width: 100%; background: #ffcc00; color: #000; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        :root { --primary: #ffcc00; --bg: #0f0f0f; --card: #1a1a1a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; }
+        
+        /* Navigasi */
+        nav { background: #000; padding: 15px; display: flex; justify-content: center; gap: 20px; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 100; }
+        nav a { color: #fff; text-decoration: none; font-weight: bold; text-transform: uppercase; cursor: pointer; padding: 5px 10px; }
+        nav a:hover, nav a.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+
+        .container { padding: 20px; max-width: 1200px; margin: auto; }
         .hidden { display: none; }
-        /* Chat Style */
-        #chat-box { background: #f0f0f0; height: 300px; overflow-y: auto; padding: 10px; border-radius: 5px; color: #000; display: flex; flex-direction: column; }
-        .msg { margin-bottom: 8px; padding: 5px 10px; border-radius: 10px; max-width: 80%; font-size: 0.9rem; }
-        .sent { background: #ffcc00; align-self: flex-end; }
-        .received { background: #ddd; align-self: flex-start; }
-        .sender-name { font-size: 0.7rem; font-weight: bold; display: block; }
+        
+        /* Dashboard Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 12px; border-left: 4px solid var(--primary); text-align: center; }
+        .stat-card h3 { margin: 0; font-size: 0.9rem; color: #aaa; }
+        .stat-card p { margin: 10px 0 0; font-size: 1.8rem; font-weight: bold; color: var(--primary); }
+
+        .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .chart-container { background: var(--card); padding: 20px; border-radius: 12px; height: 300px; }
+        
+        /* Login Box */
+        .login-box { max-width: 350px; margin: 100px auto; background: var(--card); padding: 30px; border-radius: 15px; border: 2px solid var(--primary); text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; }
+        button { width: 100%; background: var(--primary); border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; }
+
+        /* Chat & Form Boxes */
+        .box { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        #chat-box { height: 300px; overflow-y: auto; background: #222; padding: 10px; border-radius: 5px; display: flex; flex-direction: column; }
+        .msg { margin: 5px; padding: 8px; border-radius: 8px; max-width: 80%; }
+        .sent { background: var(--primary); color: #000; align-self: flex-end; }
+        .received { background: #444; align-self: flex-start; }
     </style>
 </head>
 <body>
 
-    <div id="login-section" class="box">
-        <h2>Member Login</h2>
+    <div id="section-login" class="login-box">
+        <h2 style="color:var(--primary)">FFCA LOGIN</h2>
         <input type="text" id="user" placeholder="Username">
         <input type="password" id="pass" placeholder="Password">
-        <button onclick="login()">Login</button>
-        <p id="login-status" style="text-align:center"></p>
+        <button onclick="handleLogin()">Sign In</button>
     </div>
 
-    <div id="main-section" class="hidden" style="width:100%; max-width:400px;">
-        <div class="box">
-            <h2>General Chat</h2>
-            <div id="chat-box"></div>
-            <div style="display:flex; margin-top:10px;">
-                <input type="text" id="chat-input" placeholder="Tulis pesan..." style="flex:1">
-                <button onclick="sendChat()" style="width:auto; margin:5px 0 5px 5px; padding:0 15px;">Kirim</button>
-            </div>
-        </div>
+    <div id="section-app" class="hidden">
+        <nav>
+            <a onclick="showPage('page-dashboard')" id="nav-dashboard">Dashboard</a>
+            <a onclick="showPage('page-daftar')">Daftar</a>
+            <a onclick="showPage('page-chat')">Chat</a>
+        </nav>
 
-        <div class="box">
-            <h2>Form Pendaftaran</h2>
-            <form id="reg-form">
-                <input type="text" name="nama_tim" placeholder="Nama Tim" required>
-                <input type="text" name="uid" placeholder="UID Free Fire" required>
-                <input type="text" name="nickname" id="nick-field" readonly style="background:#333">
-                <button type="submit" id="sub-btn">Kirim Data</button>
-            </form>
+        <div class="container">
+            <div id="page-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>TOTAL EVENTS</h3><p>204</p></div>
+                    <div class="stat-card"><h3>TOP CITY</h3><p>SOLO</p></div>
+                    <div class="stat-card"><h3>TOTAL SLOTS</h3><p>1,302</p></div>
+                    <div class="stat-card"><h3>AVG SLOT</h3><p>52</p></div>
+                </div>
+
+                <div class="main-grid">
+                    <div class="chart-container">
+                        <canvas id="leaderboardChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-daftar" class="hidden">
+                <div class="box">
+                    <h2>PENDAFTARAN EVENT</h2>
+                    <form id="reg-form">
+                        <input type="text" name="nama_tim" placeholder="Nama Tim" required>
+                        <input type="text" name="uid" placeholder="UID Pemain" required>
+                        <input type="text" id="nick-field" readonly style="opacity:0.6">
+                        <button type="submit">Submit Data</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="page-chat" class="hidden">
+                <div class="box">
+                    <h2>GENERAL CHAT</h2>
+                    <div id="chat-box"></div>
+                    <div style="display:flex; margin-top:10px; gap:10px;">
+                        <input type="text" id="chat-input" placeholder="Tulis pesan...">
+                        <button onclick="sendChat()" style="width:100px">Kirim</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script type="module">
-        // --- KONFIGURASI FIREBASE ---
+        // KONFIGURASI FIREBASE (Ganti dengan punyamu)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
-
+        
         const firebaseConfig = {
   apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
   authDomain: "ffca-chat.firebaseapp.com",
@@ -64,28 +113,67 @@
   appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0",
   measurementId: "G-4GXJLEDT7E"
 };
-
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const chatRef = ref(db, "chats");
 
-        // --- KONFIGURASI GOOGLE SHEETS ---
         const sheetURL = 'https://script.google.com/macros/s/AKfycbxppKiLsiJ0OPm4WmEQOi4DgPH_MXLPsIEhm7NeLAD1UCCI479fIkAGeHbjBv6MNJHkQA/exec';
 
-        window.login = function() {
+        // Navigasi
+        window.showPage = function(pageId) {
+            ['page-dashboard', 'page-daftar', 'page-chat'].forEach(p => {
+                document.getElementById(p).classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        // Login
+        window.handleLogin = function() {
             const u = document.getElementById('user').value;
             const p = document.getElementById('pass').value;
             fetch(`${sheetURL}?action=login&username=${u}&password=${p}`, { method: 'POST' })
             .then(res => res.json())
             .then(data => {
                 if(data.result === "success") {
-                    document.getElementById('login-section').classList.add('hidden');
-                    document.getElementById('main-section').classList.remove('hidden');
+                    document.getElementById('section-login').classList.add('hidden');
+                    document.getElementById('section-app').classList.remove('hidden');
                     document.getElementById('nick-field').value = data.nickname;
+                    initCharts(); // Jalankan grafik
                 } else { alert("Login Gagal!"); }
             });
         }
 
+        // Analitik Grafik (Chart.js)
+        function initCharts() {
+            // Bar Chart - Top 5 Kota
+            new Chart(document.getElementById('leaderboardChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Solo', 'Gorontalo', 'Bandung', 'Jogja', 'Bekasi'],
+                    datasets: [{
+                        label: 'Total Point',
+                        data: [151, 146, 146, 141, 131],
+                        backgroundColor: '#ffcc00'
+                    }]
+                },
+                options: { maintainAspectRatio: false, color: '#fff' }
+            });
+
+            // Pie Chart - Slot Distribution
+            new Chart(document.getElementById('pieChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Solo', 'Lainnya'],
+                    datasets: [{
+                        data: [1302, 5000],
+                        backgroundColor: ['#ffcc00', '#444']
+                    }]
+                },
+                options: { maintainAspectRatio: false, color: '#fff' }
+            });
+        }
+
+        // Chat Logic (Sama seperti sebelumnya)
         window.sendChat = function() {
             const input = document.getElementById('chat-input');
             const nick = document.getElementById('nick-field').value;
@@ -94,21 +182,12 @@
                 input.value = "";
             }
         }
-
         onChildAdded(chatRef, (data) => {
             const m = data.val();
             const msgDiv = document.createElement("div");
             msgDiv.className = `msg ${m.sender === document.getElementById('nick-field').value ? 'sent' : 'received'}`;
-            msgDiv.innerHTML = `<span class="sender-name">${m.sender}</span>${m.text}`;
+            msgDiv.innerHTML = `<small>${m.sender}</small><br>${m.text}`;
             document.getElementById("chat-box").appendChild(msgDiv);
-            document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
-        });
-
-        document.getElementById('reg-form').addEventListener('submit', e => {
-            e.preventDefault();
-            let fd = new FormData(e.target);
-            fd.append('action', 'submit');
-            fetch(sheetURL, { method: 'POST', body: fd }).then(() => alert("Data Terkirim!"));
         });
     </script>
 </body>
