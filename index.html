@@ -3,44 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FFCA - Professional Portal</title>
+    <title>FFCA Portal - All-in-One</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primary: #ffcc00; --bg: #000; --card: #1a1a1a; --text: #fff; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
-        nav { background: #000; padding: 15px; display: flex; justify-content: center; gap: 20px; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; }
-        nav a { color: #fff; text-decoration: none; font-weight: bold; text-transform: uppercase; cursor: pointer; padding: 5px 10px; transition: 0.3s; }
-        nav a:hover { color: var(--primary); }
+        :root { --primary: #ffcc00; --bg: #000; --card: #1a1a1a; }
+        body { font-family: sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 0; }
+        .hidden { display: none !important; }
         .container { padding: 20px; max-width: 1100px; margin: auto; }
-        .hidden { display: none; }
-        
-        /* Stats & Charts */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--card); padding: 20px; border-radius: 12px; border-bottom: 3px solid var(--primary); text-align: center; }
-        .chart-box { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 30px; height: 300px; }
-
-        /* Filter & Search */
-        .filter-area { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; border: 1px solid #333; }
-        .search-input { flex: 1; min-width: 200px; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: #fff; }
-        select { padding: 12px; border-radius: 8px; background: #222; color: #fff; border: 1px solid #444; cursor: pointer; min-width: 150px; }
-
-        /* Komunitas Cards */
-        .komunitas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .komunitas-card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; transition: 0.3s; position: relative; }
-        .komunitas-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(255,204,0,0.1); }
-        .komunitas-card h3 { color: var(--primary); margin: 0 0 10px 0; text-transform: uppercase; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .komunitas-info { font-size: 0.9rem; color: #ccc; line-height: 1.8; }
-        .komunitas-info b { color: var(--primary); }
-        .btn-ig { display: block; margin-top: 15px; color: #000; background: var(--primary); padding: 8px; border-radius: 5px; text-decoration: none; font-weight: bold; text-align: center; font-size: 0.85rem; }
-
-        /* Login */
-        .login-box { max-width: 350px; margin: 100px auto; background: var(--card); padding: 30px; border-radius: 15px; border: 2px solid var(--primary); text-align: center; }
-        input[type="text"], input[type="password"], input[type="tel"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; }
+        nav { background: #000; padding: 15px; display: flex; justify-content: center; gap: 20px; border-bottom: 2px solid var(--primary); position: sticky; top:0; z-index:1000; }
+        nav a { color: #fff; text-decoration: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .box { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; }
         button { width: 100%; background: var(--primary); border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; }
-        #login-status { margin-top: 15px; font-weight: bold; }
-
-        /* Chat */
-        #chat-box { height: 300px; overflow-y: auto; background: #111; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #333; }
+        
+        /* CSS Logo Komunitas */
+        .km-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .km-logo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: #222; border: 2px solid var(--primary); }
+        .komunitas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+        .km-card { background: #222; padding: 20px; border-radius: 10px; transition: 0.3s; }
+        .km-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        
+        #chat-box { height: 350px; overflow-y: auto; background: #111; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 8px 12px; border-radius: 10px; max-width: 75%; font-size: 0.9rem; }
         .sent { background: var(--primary); color: #000; align-self: flex-end; }
         .received { background: #333; align-self: flex-start; }
@@ -48,59 +31,68 @@
 </head>
 <body>
 
-    <div id="section-login" class="login-box">
-        <h2 style="color:var(--primary)">FFCA LOGIN</h2>
-        <input type="text" id="user" placeholder="Username">
-        <input type="password" id="pass" placeholder="Password">
-        <button onclick="window.handleLogin()">Sign In</button>
-        <div id="login-status"></div>
+    <div id="section-auth" class="container">
+        <div id="login-box" class="box" style="max-width: 400px; margin: 80px auto; text-align:center;">
+            <h2 style="color:var(--primary)">FFCA LOGIN</h2>
+            <input type="text" id="user" placeholder="Username">
+            <input type="password" id="pass" placeholder="Password">
+            <button onclick="window.handleLogin()">Sign In</button>
+            <p>Belum punya akun? <a onclick="window.toggleAuth()" style="color:var(--primary); cursor:pointer">Daftar</a></p>
+        </div>
+
+        <div id="reg-box" class="box hidden" style="max-width: 400px; margin: 50px auto; text-align:center;">
+            <h2 style="color:var(--primary)">REGISTRASI MEMBER</h2>
+            <form id="form-register">
+                <input type="text" name="reg_nama" placeholder="Nama Lengkap" required>
+                <input type="tel" name="reg_wa" placeholder="WhatsApp" required>
+                <input type="text" name="reg_uid" placeholder="UID FF" required>
+                <input type="text" name="reg_user" placeholder="Username Baru" required>
+                <input type="password" name="reg_pass" placeholder="Password Baru" required>
+                <button type="submit">Daftar Sekarang</button>
+            </form>
+            <p><a onclick="window.toggleAuth()" style="color:#aaa; cursor:pointer">Kembali</a></p>
+        </div>
     </div>
 
     <div id="section-app" class="hidden">
         <nav>
             <a onclick="window.showPage('page-dashboard')">Dashboard</a>
-            <a onclick="window.showPage('page-daftar')">Daftar</a>
+            <a onclick="window.showPage('page-event')">Pendaftaran</a>
             <a onclick="window.showPage('page-chat')">Chat</a>
-            <a onclick="window.handleLogout()" style="color: #ff4444;">Logout</a>
+            <a onclick="window.handleLogout()" style="color:red">Logout</a>
         </nav>
 
         <div class="container">
             <div id="page-dashboard">
-                <div class="stats-grid">
-                    <div class="stat-card"><h3>TOTAL EVENTS</h3><p>204</p></div>
-                    <div class="stat-card"><h3>TOP CITY</h3><p>SOLO</p></div>
-                    <div class="stat-card"><h3>TOTAL SLOTS</h3><p>1,302</p></div>
+                <h2 id="welcome-txt" style="color:var(--primary)"></h2>
+                <div class="box">
+                    <h3>LEADERBOARD OVERALL</h3>
+                    <div style="height:300px"><canvas id="leaderChart"></canvas></div>
                 </div>
-                <div class="chart-box"><canvas id="leaderboardChart"></canvas></div>
-
-                <h2 style="color:var(--primary); margin-top:40px;">DATA KOMUNITAS</h2>
-                <div class="filter-area">
-                    <input type="text" id="search-komunitas" class="search-input" placeholder="Cari Nama Kota atau PIC..." onkeyup="window.filterKomunitas()">
-                    <select id="filter-provinsi" onchange="window.filterKomunitas()">
-                        <option value="All">Semua Provinsi</option>
-                    </select>
+                <h3>DATA KOMUNITAS</h3>
+                <div class="box" style="display:flex; gap:10px;">
+                    <input type="text" id="search-km" placeholder="Cari Kota..." onkeyup="window.filterKM()">
+                    <select id="prov-km" onchange="window.filterKM()"><option value="All">Semua Provinsi</option></select>
                 </div>
-                <div id="komunitas-list" class="komunitas-grid">
-                    <p style="text-align:center; width:100%">Memuat data komunitas...</p>
-                </div>
+                <div id="list-km" class="komunitas-grid"></div>
             </div>
 
-            <div id="page-daftar" class="hidden">
-                <div style="background:var(--card); padding:25px; border-radius:12px;">
-                    <h2 style="color:var(--primary)">PENDAFTARAN EVENT</h2>
-                    <form id="reg-form">
+            <div id="page-event" class="hidden">
+                <div class="box">
+                    <h2 style="color:var(--primary)">FORM PENDAFTARAN</h2>
+                    <form id="form-event">
                         <input type="text" name="nama_tim" placeholder="Nama Tim" required>
-                        <input type="tel" name="no_telp" placeholder="WhatsApp (08xx)" required>
-                        <input type="text" name="uid" placeholder="UID Free Fire" required>
-                        <input type="text" id="nick-field" name="nickname" readonly style="opacity:0.5">
-                        <button type="submit" id="btn-submit">Submit Pendaftaran</button>
+                        <input type="text" name="uid" placeholder="UID FF" required>
+                        <input type="tel" name="no_telp" placeholder="WhatsApp" required>
+                        <input type="text" id="nick-field" name="nickname" readonly style="background:#333">
+                        <button type="submit">Kirim Data</button>
                     </form>
                 </div>
             </div>
 
             <div id="page-chat" class="hidden">
-                <div style="background:var(--card); padding:20px; border-radius:12px;">
-                    <h2 style="color:var(--primary)">GENERAL CHAT</h2>
+                <div class="box">
+                    <h3>COMMUNITY CHAT</h3>
                     <div id="chat-box"></div>
                     <div style="display:flex; margin-top:10px; gap:10px;">
                         <input type="text" id="chat-input" placeholder="Tulis pesan...">
@@ -115,159 +107,140 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        // --- MASUKKAN FIREBASE CONFIG KAMU DI SINI ---
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
-  authDomain: "ffca-chat.firebaseapp.com",
-  databaseURL: "https://ffca-chat-default-rtdb.firebaseio.com",
-  projectId: "ffca-chat",
-  storageBucket: "ffca-chat.firebasestorage.app",
-  messagingSenderId: "893006406369",
-  appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0",
-  measurementId: "G-4GXJLEDT7E"
-};
+        // --- KONFIGURASI ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
+            authDomain: "ffca-chat.firebaseapp.com",
+            databaseURL: "https://ffca-chat-default-rtdb.firebaseio.com",
+            projectId: "ffca-chat",
+            storageBucket: "ffca-chat.firebasestorage.app",
+            messagingSenderId: "893006406369",
+            appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0"
+        };
+        const sheetURL = 'https://script.google.com/macros/s/AKfycbxHeGviAYwQyAv4AanTpaOvx15sVTyCE6zn9OPGq7KIOHeEenZM25czrr9zNfBu0cm14w/exec';
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const chatRef = ref(db, "chats");
+        let allKM = [];
 
-        // --- MASUKKAN URL APPS SCRIPT KAMU DI SINI ---
-        const sheetURL = 'https://script.google.com/macros/s/AKfycbxHeGviAYwQyAv4AanTpaOvx15sVTyCE6zn9OPGq7KIOHeEenZM25czrr9zNfBu0cm14w/exec';
+        // Fungsi konversi link Drive ke Direct Link Gambar
+        function getDirectLink(url) {
+            if (!url) return 'https://via.placeholder.com/60?text=FFCA';
+            if (url.includes('drive.google.com')) {
+                return url.replace('file/d/', 'uc?export=view&id=').replace('/view?usp=sharing', '').replace('/view', '');
+            }
+            return url;
+        }
 
-        let allKomunitas = [];
+        window.toggleAuth = () => {
+            document.getElementById('login-box').classList.toggle('hidden');
+            document.getElementById('reg-box').classList.toggle('hidden');
+        }
 
-        // Global functions for buttons
-        window.handleLogin = function() {
+        window.handleLogin = () => {
             const u = document.getElementById('user').value;
             const p = document.getElementById('pass').value;
-            const status = document.getElementById('login-status');
-            if(!u || !p) return;
-            
-            status.innerText = "Checking account...";
-            status.style.color = "var(--primary)";
-
             fetch(`${sheetURL}?action=login&username=${u}&password=${p}`, { method: 'POST' })
             .then(res => res.json()).then(data => {
                 if(data.result === "success") {
                     localStorage.setItem('ffca_logged', 'true');
                     localStorage.setItem('ffca_nick', data.nickname);
                     enterApp(data.nickname);
-                } else { 
-                    status.innerText = "Login Gagal!"; 
-                    status.style.color = "red";
-                }
+                } else { alert("Gagal!"); }
             });
         }
 
-        window.showPage = function(id) {
-            ['page-dashboard', 'page-daftar', 'page-chat'].forEach(p => document.getElementById(p).classList.add('hidden'));
+        function enterApp(nick) {
+            document.getElementById('section-auth').classList.add('hidden');
+            document.getElementById('section-app').classList.remove('hidden');
+            document.getElementById('welcome-txt').innerText = `Halo, ${nick}!`;
+            document.getElementById('nick-field').value = nick;
+            initChart(); loadKM();
+        }
+
+        window.showPage = (id) => {
+            ['page-dashboard', 'page-event', 'page-chat'].forEach(p => document.getElementById(p).classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
         }
 
-        window.handleLogout = function() { localStorage.clear(); location.reload(); }
+        window.handleLogout = () => { localStorage.clear(); location.reload(); }
 
-        window.sendChat = function() {
-            const input = document.getElementById('chat-input');
-            const nick = document.getElementById('nick-field').value;
-            if(input.value.trim()){
-                push(chatRef, { sender: nick, text: input.value });
-                input.value = "";
-            }
-        }
-
-        window.filterKomunitas = function() {
-            const search = document.getElementById('search-komunitas').value.toLowerCase();
-            const prov = document.getElementById('filter-provinsi').value;
-            const filtered = allKomunitas.filter(item => {
-                const matchSearch = item[0].toString().toLowerCase().includes(search) || item[3].toString().toLowerCase().includes(search);
-                const matchProv = prov === "All" || item[2] === prov;
-                return matchSearch && matchProv;
-            });
-            renderKomunitas(filtered);
-        }
-
-        // Helper functions
-        function enterApp(nickname) {
-            document.getElementById('section-login').classList.add('hidden');
-            document.getElementById('section-app').classList.remove('hidden');
-            document.getElementById('nick-field').value = nickname;
-            initCharts();
-            loadKomunitas();
-        }
-
-        function loadKomunitas() {
-            fetch(`${sheetURL}?action=getKomunitas`)
-            .then(res => res.json()).then(data => {
-                allKomunitas = data;
-                renderKomunitas(data);
-                populateProvinsi(data);
+        function loadKM() {
+            fetch(`${sheetURL}?action=getKomunitas`).then(res => res.json()).then(data => {
+                allKM = data; renderKM(data);
+                const sel = document.getElementById('prov-km');
+                [...new Set(data.map(i => i[2]))].sort().forEach(p => {
+                    const o = document.createElement('option'); o.value = p; o.innerText = p; sel.appendChild(o);
+                });
             });
         }
 
-        function renderKomunitas(data) {
-            const list = document.getElementById('komunitas-list');
-            list.innerHTML = data.map(item => `
-                <div class="komunitas-card">
-                    <h3>${item[0]}</h3>
-                    <div class="komunitas-info">
-                        <p><b>PIC:</b> ${item[3]}</p>
-                        <p><b>Provinsi:</b> ${item[2]}</p>
-                        <p><b>Berdiri:</b> ${item[5]}</p>
+        function renderKM(data) {
+            const list = document.getElementById('list-km');
+            list.innerHTML = data.map(i => {
+                const logoUrl = getDirectLink(i[6]); // Kolom G (indeks 6)
+                return `
+                <div class="km-card">
+                    <div class="km-header">
+                        <img src="${logoUrl}" class="km-logo" onerror="this.src='https://via.placeholder.com/60?text=FFCA'">
+                        <h3 style="margin:0; color:var(--primary)">${i[0]}</h3>
                     </div>
-                    <a href="${item[4]}" target="_blank" class="btn-ig">Buka Instagram</a>
+                    <div style="font-size:0.9rem; line-height:1.6; color:#ccc">
+                        <p style="margin:5px 0"><b>PIC:</b> ${i[3]}</p>
+                        <p style="margin:5px 0"><b>Provinsi:</b> ${i[2]}</p>
+                        <p style="margin:5px 0"><b>Berdiri:</b> ${i[5]}</p>
+                    </div>
+                    <a href="${i[4]}" target="_blank" class="btn-ig" style="display:block; margin-top:15px; background:var(--primary); color:#000; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold; font-size:0.8rem">Buka Instagram</a>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        function populateProvinsi(data) {
-            const select = document.getElementById('filter-provinsi');
-            const provinsi = [...new Set(data.map(item => item[2]))].sort();
-            provinsi.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p; opt.innerText = p;
-                select.appendChild(opt);
-            });
+        window.filterKM = () => {
+            const s = document.getElementById('search-km').value.toLowerCase();
+            const p = document.getElementById('prov-km').value;
+            renderKM(allKM.filter(i => i[0].toLowerCase().includes(s) && (p === "All" || i[2] === p)));
         }
 
-        function initCharts() {
-            new Chart(document.getElementById('leaderboardChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['Solo', 'Gorontalo', 'Bandung', 'Jogja', 'Bekasi'],
-                    datasets: [{ label: 'Points Overall', data: [151, 146, 146, 141, 131], backgroundColor: '#ffcc00' }]
-                },
-                options: { maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } }, scales: { y: { ticks: { color: '#fff' } }, x: { ticks: { color: '#fff' } } } }
-            });
+        window.sendChat = () => {
+            const i = document.getElementById('chat-input');
+            const n = document.getElementById('nick-field').value;
+            if(i.value.trim()){ push(chatRef, { sender: n, text: i.value }); i.value = ""; }
         }
 
-        // Event listeners
-        onChildAdded(chatRef, (data) => {
-            const m = data.val();
-            const msgDiv = document.createElement("div");
-            const isMe = m.sender === document.getElementById('nick-field').value;
-            msgDiv.className = `msg ${isMe ? 'sent' : 'received'}`;
-            msgDiv.innerHTML = `<small style="font-weight:bold; display:block; margin-bottom:3px">${m.sender}</small>${m.text}`;
-            document.getElementById("chat-box").appendChild(msgDiv);
-            document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
+        onChildAdded(chatRef, (d) => {
+            const m = d.val(); const box = document.getElementById('chat-box'); if(!box) return;
+            const div = document.createElement('div');
+            div.className = `msg ${m.sender === document.getElementById('nick-field').value ? 'sent' : 'received'}`;
+            div.innerHTML = `<small><b>${m.sender}</b></small><br>${m.text}`;
+            box.appendChild(div); box.scrollTop = box.scrollHeight;
         });
 
-        document.getElementById('reg-form').addEventListener('submit', e => {
+        document.getElementById('form-register').addEventListener('submit', function(e){
             e.preventDefault();
-            const btn = document.getElementById('btn-submit');
-            btn.innerText = "Sending...";
-            let fd = new FormData(e.target);
-            fd.append('action', 'submit');
-            fetch(sheetURL, { method: 'POST', body: fd }).then(() => {
-                alert("Pendaftaran Berhasil!");
-                btn.innerText = "Submit Pendaftaran";
-                e.target.reset();
-                document.getElementById('nick-field').value = localStorage.getItem('ffca_nick');
-            });
+            let fd = new FormData(this); fd.append('action', 'register');
+            fetch(sheetURL, { method: 'POST', body: fd }).then(res => res.text()).then(t => { alert(t); location.reload(); });
         });
+
+        document.getElementById('form-event').addEventListener('submit', function(e){
+            e.preventDefault();
+            let fd = new FormData(this); fd.append('action', 'submit');
+            fetch(sheetURL, { method: 'POST', body: fd }).then(() => alert("Berhasil Terdaftar!"));
+        });
+
+        function initChart() {
+            new Chart(document.getElementById('leaderChart'), {
+                type: 'bar',
+                data: { labels: ['Solo', 'Gorontalo', 'Bandung'], datasets: [{ label: 'Points', data: [151, 146, 146], backgroundColor: '#ffcc00' }] },
+                options: { maintainAspectRatio: false, scales: { y: { ticks: { color: '#fff' } } } }
+            });
+        }
 
         window.onload = () => {
-            if(localStorage.getItem('ffca_logged') === 'true') enterApp(localStorage.getItem('ffca_nick'));
+            const logged = localStorage.getItem('ffca_logged');
+            const nick = localStorage.getItem('ffca_nick');
+            if(logged === 'true') enterApp(nick);
         }
     </script>
 </body>
