@@ -1,1 +1,28 @@
+:root { --primary: #ffcc00; --bg: #000; --card: #1a1a1a; --text: #fff; }
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+.container { padding: 20px; max-width: 1000px; margin: auto; }
+.hidden { display: none !important; }
 
+/* Box & Cards */
+.box { background: var(--card); padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333; }
+.auth-card { max-width: 380px; margin: 80px auto; text-align: center; border: 2px solid var(--primary); }
+
+/* Inputs & Buttons */
+input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; }
+button { width: 100%; background: var(--primary); border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; }
+button:hover { background: #e6b800; }
+
+/* Navigasi */
+nav { background: #000; padding: 15px; display: flex; justify-content: center; gap: 20px; border-bottom: 2px solid var(--primary); sticky; top: 0; z-index: 100; }
+nav a { color: #fff; text-decoration: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+nav a:hover { color: var(--primary); }
+
+/* Chat */
+#chat-box { height: 300px; overflow-y: auto; background: #111; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; }
+.msg { padding: 8px 12px; border-radius: 10px; max-width: 75%; font-size: 0.9rem; }
+.sent { background: var(--primary); color: #000; align-self: flex-end; }
+.received { background: #333; align-self: flex-start; }
+
+/* Komunitas Grid */
+.komunitas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+.km-card { background: #222; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary); }
