@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFCA - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav>
+        <a onclick="window.showPage('page-dashboard')">Dashboard</a>
+        <a onclick="window.showPage('page-event')">Pendaftaran</a>
+        <a onclick="window.showPage('page-chat')">Chat</a>
+        <a onclick="window.handleLogout()" style="color:red">Logout</a>
+    </nav>
+
+    <div class="container">
+        <div id="page-dashboard">
+            <h2 id="welcome-txt" style="color:var(--primary)">Halo, Member!</h2>
+            <div class="box">
+                <h3>LEADERBOARD OVERALL</h3>
+                <div style="height: 300px;"><canvas id="leaderChart"></canvas></div>
+            </div>
+            <h3>DATA KOMUNITAS</h3>
+            <div class="box" style="display:flex; gap:10px;">
+                <input type="text" id="search-km" placeholder="Cari Kota..." onkeyup="window.filterKM()">
+                <select id="prov-km" onchange="window.filterKM()"><option value="All">Semua Provinsi</option></select>
+            </div>
+            <div id="list-km" class="komunitas-grid"></div>
+        </div>
+
+        <div id="page-event" class="hidden">
+            <div class="box">
+                <h2 style="color:var(--primary)">PENDAFTARAN EVENT</h2>
+                <form id="form-event">
+                    <input type="text" name="nama_tim" placeholder="Nama Tim" required>
+                    <input type="text" name="uid" placeholder="UID Player" required>
+                    <input type="text" id="nick-field" name="nickname" readonly style="background:#333">
+                    <button type="submit">Kirim Data</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="page-chat" class="hidden">
+            <div id="chat-no-access" class="box hidden" style="color:red; text-align:center">🔒 AKSES CHAT KHUSUS ROLE FFCA & CB</div>
+            <div id="chat-area" class="box hidden">
+                <h3>GENERAL CHAT</h3>
+                <div id="chat-box"></div>
+                <div style="display:flex; margin-top:10px; gap:10px;">
+                    <input type="text" id="chat-input" placeholder="Tulis pesan...">
+                    <button onclick="window.sendChat()" style="width:100px; margin:0">Kirim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
