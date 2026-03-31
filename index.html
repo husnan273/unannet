@@ -132,8 +132,18 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        const firebaseConfig = { /* PASTE CONFIG FIREBASE */ };
-        const sheetURL = '/* PASTE URL APPS SCRIPT */';
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
+  authDomain: "ffca-chat.firebaseapp.com",
+  databaseURL: "https://ffca-chat-default-rtdb.firebaseio.com",
+  projectId: "ffca-chat",
+  storageBucket: "ffca-chat.firebasestorage.app",
+  messagingSenderId: "893006406369",
+  appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0",
+  measurementId: "G-4GXJLEDT7E"
+};
+        const sheetURL = 'https://script.google.com/macros/s/AKfycbwFLmXzr7D-yu8k0J6d6OA0da5aKFay9AORy1aCBtc3M2be3euWiaopqJ24Ysz93XT3yQ/exec';
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
