@@ -3,137 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Event FFCA</title>
+    <title>Pendaftaran Event FFCA</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            color: #ffcc00;
-            text-transform: uppercase;
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-        }
-        .header p {
-            font-size: 1.1rem;
-            color: #ccc;
-        }
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
-            width: 100%;
-        }
-        .card {
-            background: linear-gradient(145deg, #1a1a1a, #000);
-            border: 2px solid #ffcc00;
-            padding: 20px;
-            border-radius: 10px;
-            position: relative;
-        }
-        .card h2 {
-            color: #ffcc00;
-            margin-top: 0;
-            border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-            text-transform: uppercase;
-        }
-        .card ul {
-            padding-left: 20px;
-            color: #ddd;
-        }
-        .card li {
-            margin-bottom: 10px;
-        }
-        .footer-info {
-            background-color: #ffcc00;
-            color: #000;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 5px;
-            margin-top: 30px;
-            text-align: center;
-            width: 100%;
-            max-width: 1000px;
-        }
-        .btn-regis {
-            display: block;
-            width: fit-content;
-            margin: 30px auto;
-            background-color: #ffcc00;
-            color: #000;
-            text-decoration: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            text-transform: uppercase;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-        .btn-regis:hover {
-            background-color: #fff;
-            transform: scale(1.05);
-        }
+        body { font-family: sans-serif; background-color: #000; color: #fff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .form-container { background: #1a1a1a; border: 2px solid #ffcc00; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; }
+        h2 { color: #ffcc00; text-align: center; text-transform: uppercase; }
+        label { display: block; margin-top: 15px; color: #ccc; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; box-sizing: border-box; }
+        .btn-submit { width: 100%; background: #ffcc00; color: #000; border: none; padding: 15px; margin-top: 25px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-submit:hover { background: #fff; }
+        #status { margin-top: 15px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>UNAN GANTENG</h1>
-        <p>Ayo daftarin event mu di FFCA! Setiap kegiatan Nobar, Tournament, Gathering, dan Workshop bisa mendapatkan support berikut:</p>
+    <div class="form-container">
+        <h2>Daftar Event FFCA</h2>
+        <form id="ffca-form">
+            <label>Nama Tim</label>
+            <input type="text" name="nama_tim" required placeholder="Masukkan Nama Tim">
+            
+            <label>Nomor Telepon (WhatsApp)</label>
+            <input type="tel" name="no_telp" required placeholder="Contoh: 08123456789">
+            
+            <label>UID (Free Fire)</label>
+            <input type="text" name="uid" required placeholder="Masukkan UID Pemain">
+            
+            <label>Nickname</label>
+            <input type="text" name="nickname" required placeholder="Masukkan Nickname">
+            
+            <button type="submit" class="btn-submit" id="submit-button">Submit Pendaftaran</button>
+        </form>
+        <div id="status"></div>
     </div>
 
-    <div class="container">
-        <div class="card">
-            <h2>DIAMOND</h2>
-            <ul>
-                <li>Dibagikan sesuai jumlah peserta</li>
-                <li>Kegiatan online tidak bisa mendapatkan support Diamond dan PC Client kecuali Workshop</li>
-            </ul>
-        </div>
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxppKiLsiJ0OPm4WmEQOi4DgPH_MXLPsIEhm7NeLAD1UCCI479fIkAGeHbjBv6MNJHkQA/exec'; // GANTI INI
+        const form = document.getElementById('ffca-form');
+        const status = document.getElementById('status');
+        const btn = document.getElementById('submit-button');
 
-        <div class="card">
-            <h2>CR GARENA</h2>
-            <ul>
-                <li>Didapatkan melalui pengajuan sesuai guideline</li>
-                <li>Hanya untuk event yang sesuai guideline dan mendapat persetujuan Garena</li>
-            </ul>
-        </div>
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            btn.disabled = true;
+            status.innerHTML = "Sedang mengirim data...";
+            status.style.color = "#ffcc00";
 
-        <div class="card">
-            <h2>EXPOSURE</h2>
-            <ul>
-                <li>Dapatkan exposure tambahan dari social media Free Fire</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <h2>MERCHANDISE</h2>
-            <ul>
-                <li>Hanya tersedia di periode tertentu yang akan diinfokan pada waktunya</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="footer-info">
-        NEW! Dapatkan Advance Room Card untuk setiap event terdaftar & telah disetujui oleh Garena!
-    </div>
-
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfwGY3bD5MAHrSMFztoVqfJR1_MSasPerz6cEjp-QqfYxb6vA/viewform" class="btn-regis">
-        DAFTAR EVENT SEKARANG
-    </a>
-
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+                .then(response => {
+                    status.innerHTML = "Pendaftaran Berhasil Terkirim!";
+                    status.style.color = "#00ff00";
+                    form.reset();
+                    btn.disabled = false;
+                })
+                .catch(error => {
+                    status.innerHTML = "Gagal mengirim. Coba lagi!";
+                    status.style.color = "#ff0000";
+                    btn.disabled = false;
+                });
+        });
+    </script>
 </body>
 </html>
