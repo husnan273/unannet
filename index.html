@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FFCA - Member Portal</title>
+    <title>FFCA - Member Portal & Chat</title>
     <style>
-        body { font-family: sans-serif; background: #000; color: #fff; padding: 20px; display: flex; justify-content: center; }
-        .box { background: #1a1a1a; border: 2px solid #ffcc00; padding: 25px; border-radius: 15px; width: 100%; max-width: 350px; }
-        h2 { color: #ffcc00; text-align: center; text-transform: uppercase; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; box-sizing: border-box; }
-        button { width: 100%; background: #ffcc00; color: #000; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        body { font-family: sans-serif; background: #000; color: #fff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .box { background: #1a1a1a; border: 2px solid #ffcc00; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; margin-bottom: 20px; }
+        h2 { color: #ffcc00; text-align: center; text-transform: uppercase; }
+        input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; box-sizing: border-box; }
+        button { width: 100%; background: #ffcc00; color: #000; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .hidden { display: none; }
-        #status { margin-top: 15px; text-align: center; font-size: 0.9rem; }
+        /* Chat Style */
+        #chat-box { background: #f0f0f0; height: 300px; overflow-y: auto; padding: 10px; border-radius: 5px; color: #000; display: flex; flex-direction: column; }
+        .msg { margin-bottom: 8px; padding: 5px 10px; border-radius: 10px; max-width: 80%; font-size: 0.9rem; }
+        .sent { background: #ffcc00; align-self: flex-end; }
+        .received { background: #ddd; align-self: flex-start; }
+        .sender-name { font-size: 0.7rem; font-weight: bold; display: block; }
     </style>
 </head>
 <body>
@@ -21,62 +26,83 @@
         <input type="text" id="user" placeholder="Username">
         <input type="password" id="pass" placeholder="Password">
         <button onclick="login()">Login</button>
-        <div id="login-status"></div>
+        <p id="login-status" style="text-align:center"></p>
     </div>
 
-    <div id="form-section" class="box hidden">
-        <h2>Daftar Event FFCA</h2>
-        <p id="welcome-msg" style="text-align: center; color: #ffcc00;"></p>
-        <form id="reg-form">
-            <input type="text" name="nama_tim" placeholder="Nama Tim" required>
-            <input type="tel" name="no_telp" placeholder="Nomor WhatsApp" required>
-            <input type="text" name="uid" placeholder="UID Free Fire" required>
-            <input type="text" name="nickname" id="nick-field" readonly style="background: #333; color: #888;">
-            <button type="submit" id="sub-btn">Submit Pendaftaran</button>
-        </form>
-        <div id="reg-status"></div>
+    <div id="main-section" class="hidden" style="width:100%; max-width:400px;">
+        <div class="box">
+            <h2>General Chat</h2>
+            <div id="chat-box"></div>
+            <div style="display:flex; margin-top:10px;">
+                <input type="text" id="chat-input" placeholder="Tulis pesan..." style="flex:1">
+                <button onclick="sendChat()" style="width:auto; margin:5px 0 5px 5px; padding:0 15px;">Kirim</button>
+            </div>
+        </div>
+
+        <div class="box">
+            <h2>Form Pendaftaran</h2>
+            <form id="reg-form">
+                <input type="text" name="nama_tim" placeholder="Nama Tim" required>
+                <input type="text" name="uid" placeholder="UID Free Fire" required>
+                <input type="text" name="nickname" id="nick-field" readonly style="background:#333">
+                <button type="submit" id="sub-btn">Kirim Data</button>
+            </form>
+        </div>
     </div>
 
-    <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxppKiLsiJ0OPm4WmEQOi4DgPH_MXLPsIEhm7NeLAD1UCCI479fIkAGeHbjBv6MNJHkQA/exec';
+    <script type="module">
+        // --- KONFIGURASI FIREBASE ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        function login() {
+        const firebaseConfig = {
+            // PASTE / TEMPEL KODE FIREBASE CONFIG KAMU DI SINI (DARI LANGKAH 1)
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const chatRef = ref(db, "chats");
+
+        // --- KONFIGURASI GOOGLE SHEETS ---
+        const sheetURL = 'https://script.google.com/macros/s/AKfycbxppKiLsiJ0OPm4WmEQOi4DgPH_MXLPsIEhm7NeLAD1UCCI479fIkAGeHbjBv6MNJHkQA/exec';
+
+        window.login = function() {
             const u = document.getElementById('user').value;
             const p = document.getElementById('pass').value;
-            const stat = document.getElementById('login-status');
-            
-            stat.innerHTML = "Mengecek akun...";
-            
-            fetch(`${scriptURL}?action=login&username=${u}&password=${p}`, { method: 'POST' })
+            fetch(`${sheetURL}?action=login&username=${u}&password=${p}`, { method: 'POST' })
             .then(res => res.json())
             .then(data => {
                 if(data.result === "success") {
                     document.getElementById('login-section').classList.add('hidden');
-                    document.getElementById('form-section').classList.remove('hidden');
-                    document.getElementById('welcome-msg').innerText = "Halo, " + data.nickname + "!";
+                    document.getElementById('main-section').classList.remove('hidden');
                     document.getElementById('nick-field').value = data.nickname;
-                } else {
-                    stat.innerHTML = "<span style='color:red'>Username/Password Salah!</span>";
-                }
+                } else { alert("Login Gagal!"); }
             });
         }
 
+        window.sendChat = function() {
+            const input = document.getElementById('chat-input');
+            const nick = document.getElementById('nick-field').value;
+            if(input.value.trim()){
+                push(chatRef, { sender: nick, text: input.value });
+                input.value = "";
+            }
+        }
+
+        onChildAdded(chatRef, (data) => {
+            const m = data.val();
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `msg ${m.sender === document.getElementById('nick-field').value ? 'sent' : 'received'}`;
+            msgDiv.innerHTML = `<span class="sender-name">${m.sender}</span>${m.text}`;
+            document.getElementById("chat-box").appendChild(msgDiv);
+            document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
+        });
+
         document.getElementById('reg-form').addEventListener('submit', e => {
             e.preventDefault();
-            const btn = document.getElementById('sub-btn');
-            const stat = document.getElementById('reg-status');
-            btn.disabled = true;
-            stat.innerHTML = "Mengirim...";
-
-            let formData = new FormData(e.target);
-            formData.append('action', 'submit');
-
-            fetch(scriptURL, { method: 'POST', body: formData })
-            .then(() => {
-                stat.innerHTML = "<span style='color:green'>Berhasil Terdaftar!</span>";
-                e.target.reset();
-                btn.disabled = false;
-            });
+            let fd = new FormData(e.target);
+            fd.append('action', 'submit');
+            fetch(sheetURL, { method: 'POST', body: fd }).then(() => alert("Data Terkirim!"));
         });
     </script>
 </body>
