@@ -229,6 +229,12 @@ const firebaseConfig = {
                 document.getElementById('nick-field').value = localStorage.getItem('ffca_nick');
             });
         });
+
+        // Bagian Akhir Form Submit
+        fetch(sheetURL, { method: 'POST', body: fd })
+        .then(() => {
+            alert("Pendaftaran Berhasil!");
+            // ... dst
     </script>
 </body>
 </html>
