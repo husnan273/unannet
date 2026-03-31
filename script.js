@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
   authDomain: "ffca-chat.firebaseapp.com",
@@ -12,31 +11,29 @@ const firebaseConfig = {
   appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0",
   measurementId: "G-4GXJLEDT7E"
 };
-const sheetURL = https://script.google.com/macros/s/AKfycbxHeGviAYwQyAv4AanTpaOvx15sVTyCE6zn9OPGq7KIOHeEenZM25czrr9zNfBu0cm14w/exec';
+const sheetURL = 'https://script.google.com/macros/s/AKfycbxHeGviAYwQyAv4AanTpaOvx15sVTyCE6zn9OPGq7KIOHeEenZM25czrr9zNfBu0cm14w/exec';
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const chatRef = ref(db, "chats");
 let allKM = [];
 
-// --- LOGIN ---
+// --- SISTEM LOGIN ---
 window.handleLogin = function() {
     const u = document.getElementById('user').value;
     const p = document.getElementById('pass').value;
-    const st = document.getElementById('login-status');
     if(!u || !p) return;
-    st.innerText = "Checking...";
     
     fetch(`${sheetURL}?action=login&username=${u}&password=${p}`, { method: 'POST' })
     .then(res => res.json()).then(data => {
         if(data.result === "success") {
             localStorage.setItem('ffca_user', JSON.stringify(data));
             window.location.href = "dashboard.html";
-        } else { st.innerText = "Login Gagal!"; st.style.color = "red"; }
-    });
+        } else { alert("Username/Password Salah!"); }
+    }).catch(err => alert("Error: " + err));
 }
 
-// --- REGISTER ---
+// --- REGISTRASI ---
 const regForm = document.getElementById('form-registrasi');
 if(regForm) {
     regForm.addEventListener('submit', e => {
@@ -48,71 +45,109 @@ if(regForm) {
     });
 }
 
-// --- DASHBOARD LOGIC ---
-function enterApp() {
-    const user = JSON.parse(localStorage.getItem('ffca_user'));
-    if(!user && window.location.pathname.includes("dashboard")) {
-        window.location.href = "index.html"; return;
-    }
+// --- LOGIKA DASHBOARD ---
+function initDashboard() {
+    const session = localStorage.getItem('ffca_user');
+    if(!session) { window.location.href = "index.html"; return; }
+    
+    const user = JSON.parse(session);
     if(document.getElementById('welcome-txt')) {
         document.getElementById('welcome-txt').innerText = `Halo, ${user.nickname} (${user.role})`;
-        document.getElementById('nick-field').value = user.nickname;
+        if(document.getElementById('nick-field')) document.getElementById('nick-field').value = user.nickname;
+        
+        // Chat Access
+        const chatArea = document.getElementById('chat-area');
+        const chatNo = document.getElementById('chat-no-access');
         if(user.role === "FFCA" || user.role === "CB") {
-            document.getElementById('chat-area').classList.remove('hidden');
-        } else { document.getElementById('chat-no-access').classList.remove('hidden'); }
-        initChart(); loadKM();
+            if(chatArea) chatArea.classList.remove('hidden');
+        } else {
+            if(chatNo) chatNo.classList.remove('hidden');
+        }
+        
+        initChart();
+        loadKomunitas();
     }
 }
 
-window.showPage = (id) => {
-    ['page-dashboard', 'page-event', 'page-chat'].forEach(p => document.getElementById(p).classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-}
-
-window.handleLogout = () => { localStorage.clear(); window.location.href = "index.html"; }
-
-// --- KOMUNITAS & CHART ---
-function loadKM() {
-    fetch(`${sheetURL}?action=getKomunitas`).then(res => res.json()).then(data => {
-        allKM = data; renderKM(data);
+// --- DATA KOMUNITAS ---
+function loadKomunitas() {
+    fetch(`${sheetURL}?action=getKomunitas`)
+    .then(res => res.json()).then(data => {
+        allKM = data;
+        renderKM(data);
         const sel = document.getElementById('prov-km');
-        [...new Set(data.map(i => i[2]))].sort().forEach(p => {
-            const o = document.createElement('option'); o.value = p; o.innerText = p; sel.appendChild(o);
-        });
+        if(sel) {
+            const provinces = [...new Set(data.map(i => i[2]))].sort();
+            provinces.forEach(p => {
+                const o = document.createElement('option'); o.value = p; o.innerText = p; sel.appendChild(o);
+            });
+        }
     });
 }
 
 function renderKM(data) {
-    const l = document.getElementById('list-km');
-    l.innerHTML = data.map(i => `<div class="km-card"><h3>${i[0]}</h3><p>PIC: ${i[3]}</p><a href="${i[4]}" target="_blank">Instagram</a></div>`).join('');
+    const list = document.getElementById('list-km');
+    if(!list) return;
+    list.innerHTML = data.map(i => `
+        <div class="km-card">
+            <h3 style="color:#ffcc00; margin:0">${i[0]}</h3>
+            <p style="font-size:0.8rem; margin:5px 0">PIC: ${i[3]} | Prov: ${i[2]}</p>
+            <a href="${i[4]}" target="_blank" style="color:#ffcc00; text-decoration:none; font-size:0.8rem">Instagram</a>
+        </div>
+    `).join('');
 }
 
 window.filterKM = () => {
     const s = document.getElementById('search-km').value.toLowerCase();
     const p = document.getElementById('prov-km').value;
-    renderKM(allKM.filter(i => i[0].toLowerCase().includes(s) && (p === "All" || i[2] === p)));
+    const filtered = allKM.filter(i => i[0].toLowerCase().includes(s) && (p === "All" || i[2] === p));
+    renderKM(filtered);
 }
 
+// --- EVENT & CHAT ---
+window.showPage = (id) => {
+    ['page-dashboard', 'page-event', 'page-chat'].forEach(p => {
+        const el = document.getElementById(p);
+        if(el) el.classList.add('hidden');
+    });
+    document.getElementById(id).classList.remove('hidden');
+}
+
+window.sendChat = () => {
+    const input = document.getElementById('chat-input');
+    const user = JSON.parse(localStorage.getItem('ffca_user'));
+    if(input.value.trim()) {
+        push(chatRef, { sender: user.nickname, text: input.value });
+        input.value = "";
+    }
+}
+
+onChildAdded(chatRef, (snapshot) => {
+    const msg = snapshot.val();
+    const box = document.getElementById('chat-box');
+    if(!box) return;
+    const div = document.createElement('div');
+    const user = JSON.parse(localStorage.getItem('ffca_user'));
+    div.className = `msg ${msg.sender === user.nickname ? 'sent' : 'received'}`;
+    div.innerHTML = `<small><b>${msg.sender}</b></small><br>${msg.text}`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+});
+
+window.handleLogout = () => { localStorage.clear(); window.location.href = "index.html"; }
+
 function initChart() {
-    new Chart(document.getElementById('leaderChart'), {
+    const ctx = document.getElementById('leaderChart');
+    if(!ctx) return;
+    new Chart(ctx, {
         type: 'bar',
-        data: { labels: ['Solo', 'Gorontalo', 'Bandung'], datasets: [{ label: 'Points', data: [151, 146, 146], backgroundColor: '#ffcc00' }] },
-        options: { maintainAspectRatio: false, scales: { y: { ticks: { color: '#fff' } } } }
+        data: {
+            labels: ['Solo', 'Gorontalo', 'Bandung', 'Jogja', 'Bekasi'],
+            datasets: [{ label: 'Points', data: [151, 146, 146, 141, 131], backgroundColor: '#ffcc00' }]
+        },
+        options: { maintainAspectRatio: false, scales: { y: { ticks: { color: '#fff' } }, x: { ticks: { color: '#fff' } } } }
     });
 }
 
-// --- CHAT ---
-window.sendChat = () => {
-    const i = document.getElementById('chat-input');
-    const u = JSON.parse(localStorage.getItem('ffca_user'));
-    if(i.value.trim()) { push(chatRef, { sender: u.nickname, text: i.value }); i.value = ""; }
-}
-onChildAdded(chatRef, (d) => {
-    const m = d.val(); const b = document.getElementById('chat-box'); if(!b) return;
-    const div = document.createElement('div');
-    div.className = `msg ${m.sender === JSON.parse(localStorage.getItem('ffca_user')).nickname ? 'sent' : 'received'}`;
-    div.innerHTML = `<small><b>${m.sender}</b></small><br>${m.text}`;
-    b.appendChild(div); b.scrollTop = b.scrollHeight;
-});
-
-window.onload = enterApp;
+// Jalankan otomatis saat halaman selesai dimuat
+window.addEventListener('DOMContentLoaded', initDashboard);
