@@ -12,7 +12,7 @@ const firebaseConfig = {
   appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0",
   measurementId: "G-4GXJLEDT7E"
 };
-const sheetURL = 'https://script.google.com/macros/s/AKfycbxHeGviAYwQyAv4AanTpaOvx15sVTyCE6zn9OPGq7KIOHeEenZM25czrr9zNfBu0cm14w/exec';
+const sheetURL = https://script.google.com/macros/s/AKfycbxHeGviAYwQyAv4AanTpaOvx15sVTyCE6zn9OPGq7KIOHeEenZM25czrr9zNfBu0cm14w/exec';
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
