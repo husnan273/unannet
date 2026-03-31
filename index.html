@@ -3,64 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pendaftaran Event FFCA</title>
+    <title>FFCA - Member Portal</title>
     <style>
-        body { font-family: sans-serif; background-color: #000; color: #fff; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .form-container { background: #1a1a1a; border: 2px solid #ffcc00; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; }
-        h2 { color: #ffcc00; text-align: center; text-transform: uppercase; }
-        label { display: block; margin-top: 15px; color: #ccc; }
-        input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; box-sizing: border-box; }
-        .btn-submit { width: 100%; background: #ffcc00; color: #000; border: none; padding: 15px; margin-top: 25px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .btn-submit:hover { background: #fff; }
-        #status { margin-top: 15px; text-align: center; font-weight: bold; }
+        body { font-family: sans-serif; background: #000; color: #fff; padding: 20px; display: flex; justify-content: center; }
+        .box { background: #1a1a1a; border: 2px solid #ffcc00; padding: 25px; border-radius: 15px; width: 100%; max-width: 350px; }
+        h2 { color: #ffcc00; text-align: center; text-transform: uppercase; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; box-sizing: border-box; }
+        button { width: 100%; background: #ffcc00; color: #000; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        .hidden { display: none; }
+        #status { margin-top: 15px; text-align: center; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-    <div class="form-container">
+    <div id="login-section" class="box">
+        <h2>Member Login</h2>
+        <input type="text" id="user" placeholder="Username">
+        <input type="password" id="pass" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <div id="login-status"></div>
+    </div>
+
+    <div id="form-section" class="box hidden">
         <h2>Daftar Event FFCA</h2>
-        <form id="ffca-form">
-            <label>Nama Tim</label>
-            <input type="text" name="nama_tim" required placeholder="Masukkan Nama Tim">
-            
-            <label>Nomor Telepon (WhatsApp)</label>
-            <input type="tel" name="no_telp" required placeholder="Contoh: 08123456789">
-            
-            <label>UID (Free Fire)</label>
-            <input type="text" name="uid" required placeholder="Masukkan UID Pemain">
-            
-            <label>Nickname</label>
-            <input type="text" name="nickname" required placeholder="Masukkan Nickname">
-            
-            <button type="submit" class="btn-submit" id="submit-button">Submit Pendaftaran</button>
+        <p id="welcome-msg" style="text-align: center; color: #ffcc00;"></p>
+        <form id="reg-form">
+            <input type="text" name="nama_tim" placeholder="Nama Tim" required>
+            <input type="tel" name="no_telp" placeholder="Nomor WhatsApp" required>
+            <input type="text" name="uid" placeholder="UID Free Fire" required>
+            <input type="text" name="nickname" id="nick-field" readonly style="background: #333; color: #888;">
+            <button type="submit" id="sub-btn">Submit Pendaftaran</button>
         </form>
-        <div id="status"></div>
+        <div id="reg-status"></div>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxppKiLsiJ0OPm4WmEQOi4DgPH_MXLPsIEhm7NeLAD1UCCI479fIkAGeHbjBv6MNJHkQA/exec'; // GANTI INI
-        const form = document.getElementById('ffca-form');
-        const status = document.getElementById('status');
-        const btn = document.getElementById('submit-button');
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxppKiLsiJ0OPm4WmEQOi4DgPH_MXLPsIEhm7NeLAD1UCCI479fIkAGeHbjBv6MNJHkQA/exec';
 
-        form.addEventListener('submit', e => {
+        function login() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            const stat = document.getElementById('login-status');
+            
+            stat.innerHTML = "Mengecek akun...";
+            
+            fetch(`${scriptURL}?action=login&username=${u}&password=${p}`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === "success") {
+                    document.getElementById('login-section').classList.add('hidden');
+                    document.getElementById('form-section').classList.remove('hidden');
+                    document.getElementById('welcome-msg').innerText = "Halo, " + data.nickname + "!";
+                    document.getElementById('nick-field').value = data.nickname;
+                } else {
+                    stat.innerHTML = "<span style='color:red'>Username/Password Salah!</span>";
+                }
+            });
+        }
+
+        document.getElementById('reg-form').addEventListener('submit', e => {
             e.preventDefault();
+            const btn = document.getElementById('sub-btn');
+            const stat = document.getElementById('reg-status');
             btn.disabled = true;
-            status.innerHTML = "Sedang mengirim data...";
-            status.style.color = "#ffcc00";
+            stat.innerHTML = "Mengirim...";
 
-            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-                .then(response => {
-                    status.innerHTML = "Pendaftaran Berhasil Terkirim!";
-                    status.style.color = "#00ff00";
-                    form.reset();
-                    btn.disabled = false;
-                })
-                .catch(error => {
-                    status.innerHTML = "Gagal mengirim. Coba lagi!";
-                    status.style.color = "#ff0000";
-                    btn.disabled = false;
-                });
+            let formData = new FormData(e.target);
+            formData.append('action', 'submit');
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+            .then(() => {
+                stat.innerHTML = "<span style='color:green'>Berhasil Terdaftar!</span>";
+                e.target.reset();
+                btn.disabled = false;
+            });
         });
     </script>
 </body>
