@@ -3,63 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FFCA Portal</title>
-    <link rel="stylesheet" href="style.css"> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>FFCA - Login</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="section-auth" class="container">
-        <div id="login-box" class="box auth-card">
-            <h2>FFCA LOGIN</h2>
+    <div class="container">
+        <div class="box auth-card">
+            <h2 style="color:var(--primary)">FFCA LOGIN</h2>
             <input type="text" id="user" placeholder="Username">
             <input type="password" id="pass" placeholder="Password">
             <button onclick="window.handleLogin()">Sign In</button>
-            <p>Belum punya akun? <a onclick="window.toggleAuth()">Daftar</a></p>
-        </div>
-        <div id="reg-box" class="box auth-card hidden">
-            <h2>REGISTRASI</h2>
-            <form id="form-registrasi">
-                <input type="text" name="reg_nama" placeholder="Nama Lengkap" required>
-                <input type="text" name="reg_user" placeholder="Username" required>
-                <input type="password" name="reg_pass" placeholder="Password" required>
-                <button type="submit">Daftar</button>
-            </form>
-            <p><a onclick="window.toggleAuth()">Kembali</a></p>
+            <p id="login-status" style="margin-top:15px"></p>
+            <p>Belum punya akun? <a href="register.html" style="color:var(--primary)">Daftar Disini</a></p>
         </div>
     </div>
-
-    <div id="section-app" class="hidden">
-        <nav>
-            <a onclick="window.showPage('page-dashboard')">Dashboard</a>
-            <a onclick="window.showPage('page-event')">Event</a>
-            <a onclick="window.showPage('page-chat')">Chat</a>
-            <a onclick="window.handleLogout()" style="color:red">Logout</a>
-        </nav>
-        <div class="container">
-            <div id="page-dashboard">
-                <h2 id="welcome-txt"></h2>
-                <div class="box"><canvas id="leaderChart"></canvas></div>
-                <div id="list-km" class="komunitas-grid"></div>
-            </div>
-            <div id="page-event" class="hidden">
-                <div class="box">
-                    <h2>PENDAFTARAN</h2>
-                    <form id="form-event">
-                        <input type="text" name="nama_tim" placeholder="Nama Tim">
-                        <input type="text" id="nick-field" name="nickname" readonly>
-                        <button type="submit">Kirim</button>
-                    </form>
-                </div>
-            </div>
-            <div id="page-chat" class="hidden">
-                <div id="chat-area" class="box">
-                    <div id="chat-box"></div>
-                    <input type="text" id="chat-input" placeholder="Pesan...">
-                    <button onclick="window.sendChat()">Kirim</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script type="module" src="script.js"></script>
 </body>
 </html>
