@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FFCA Portal - Community & Logo</title>
+    <title>FFCA Portal - Community & Logo Final</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #ffcc00; --bg: #000; --card: #1a1a1a; }
@@ -16,14 +16,14 @@
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; }
         button { width: 100%; background: var(--primary); border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; }
         
-        /* Dashboard & Community Styles */
+        /* Komunitas Cards */
         .komunitas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-        .km-card { background: #222; padding: 20px; border-radius: 10px; border: 1px solid #333; transition: 0.3s; }
+        .km-card { background: #1a1a1a; padding: 20px; border-radius: 12px; border: 1px solid #333; transition: 0.3s; }
         .km-card:hover { border-color: var(--primary); transform: translateY(-5px); }
         .km-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .km-logo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #333; }
+        .km-logo { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #222; }
 
-        /* Chat Styles */
+        /* Chat */
         #chat-box { height: 350px; overflow-y: auto; background: #111; padding: 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 10px; border-radius: 10px; max-width: 80%; font-size: 0.9rem; }
         .sent { background: var(--primary); color: #000; align-self: flex-end; }
@@ -50,7 +50,7 @@
                 <input type="password" name="reg_pass" placeholder="Password" required>
                 <button type="submit">Daftar Sekarang</button>
             </form>
-            <p><a onclick="window.toggleAuth()" style="color:#aaa; cursor:pointer">Kembali</a></p>
+            <p><a onclick="window.toggleAuth()" style="color:#aaa; cursor:pointer">Kembali ke Login</a></p>
         </div>
     </div>
 
@@ -108,7 +108,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        // --- KONFIGURASI ---
         const firebaseConfig = {
             apiKey: "AIzaSyDT9hPRbKJ3BRsnQ3R6su0YVA1C_YhaAN4",
             authDomain: "ffca-chat.firebaseapp.com",
@@ -118,21 +117,23 @@
             messagingSenderId: "893006406369",
             appId: "1:893006406369:web:d4c5e38f7d3ce9cde68da0"
         };
-        const sheetURL = 'https://script.google.com/macros/s/AKfycbwFLmXzr7D-yu8k0J6d6OA0da5aKFay9AORy1aCBtc3M2be3euWiaopqJ24Ysz93XT3yQ/exec';
+        const sheetURL = https://script.google.com/macros/s/AKfycbwFLmXzr7D-yu8k0J6d6OA0da5aKFay9AORy1aCBtc3M2be3euWiaopqJ24Ysz93XT3yQ/exec;
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const chatRef = ref(db, "chats");
         let allKM = [];
 
-        // Fungsi ubah link Drive ke Direct Link
+        // Fungsi fix logo dari Drive
         function getImg(url) {
-            if (!url) return 'https://via.placeholder.com/60?text=FFCA';
-            if (url.includes('drive.google.com')) {
-                var id = url.split('/d/')[1] ? url.split('/d/')[1].split('/')[0] : url.split('id=')[1];
-                return 'https://lh3.googleusercontent.com/d/' + id;
+            if (!url || url.trim() === "") return 'https://via.placeholder.com/65?text=FFCA';
+            let fileId = "";
+            if (url.includes("id=")) {
+                fileId = url.split("id=")[1].split("&")[0];
+            } else if (url.includes("/d/")) {
+                fileId = url.split("/d/")[1].split("/")[0];
             }
-            return url;
+            return fileId ? `https://lh3.googleusercontent.com/u/0/d/${fileId}=w200-h200-p-k-nu-iv1` : url;
         }
 
         window.toggleAuth = () => {
@@ -142,102 +143,4 @@
 
         window.handleLogin = () => {
             const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
-            fetch(`${sheetURL}?action=login&username=${u}&password=${p}`, { method: 'POST' })
-            .then(res => res.json()).then(data => {
-                if(data.result === "success") {
-                    localStorage.setItem('ffca_logged', 'true');
-                    localStorage.setItem('ffca_nick', data.nickname);
-                    enterApp(data.nickname);
-                } else { alert("Gagal Login!"); }
-            });
-        }
-
-        function enterApp(nick) {
-            document.getElementById('section-auth').classList.add('hidden');
-            document.getElementById('section-app').classList.remove('hidden');
-            document.getElementById('welcome-txt').innerText = `Halo, ${nick}!`;
-            document.getElementById('nick-field').value = nick;
-            initChart(); loadKM();
-        }
-
-        window.showPage = (id) => {
-            ['page-dashboard', 'page-event', 'page-chat'].forEach(p => document.getElementById(p).classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        window.handleLogout = () => { localStorage.clear(); location.reload(); }
-
-        function loadKM() {
-            fetch(`${sheetURL}?action=getKomunitas`).then(res => res.json()).then(data => {
-                allKM = data; renderKM(data);
-                const sel = document.getElementById('prov-km');
-                [...new Set(data.map(i => i[2]))].sort().forEach(p => {
-                    const o = document.createElement('option'); o.value = p; o.innerText = p; sel.appendChild(o);
-                });
-            });
-        }
-
-        function renderKM(data) {
-            const list = document.getElementById('list-km');
-            list.innerHTML = data.map(i => `
-                <div class="km-card">
-                    <div class="km-header">
-                        <img src="${getImg(i[6])}" class="km-logo" onerror="this.src='https://via.placeholder.com/60?text=FFCA'">
-                        <h3 style="margin:0; color:var(--primary)">${i[0]}</h3>
-                    </div>
-                    <p style="font-size:0.9rem; margin:5px 0"><b>PIC:</b> ${i[3]}</p>
-                    <p style="font-size:0.9rem; margin:5px 0"><b>Provinsi:</b> ${i[2]}</p>
-                    <p style="font-size:0.9rem; margin:5px 0"><b>Berdiri:</b> ${i[5]}</p>
-                    <a href="${i[4]}" target="_blank" style="display:block; margin-top:15px; background:var(--primary); color:#000; text-align:center; padding:8px; border-radius:5px; text-decoration:none; font-weight:bold; font-size:0.8rem">Buka Instagram</a>
-                </div>
-            `).join('');
-        }
-
-        window.filterKM = () => {
-            const s = document.getElementById('search-km').value.toLowerCase();
-            const p = document.getElementById('prov-km').value;
-            renderKM(allKM.filter(i => (i[0].toLowerCase().includes(s) || i[3].toLowerCase().includes(s)) && (p === "All" || i[2] === p)));
-        }
-
-        window.sendChat = () => {
-            const i = document.getElementById('chat-input');
-            const n = document.getElementById('nick-field').value;
-            if(i.value.trim()){ push(chatRef, { sender: n, text: i.value }); i.value = ""; }
-        }
-
-        onChildAdded(chatRef, (d) => {
-            const m = d.val(); const box = document.getElementById('chat-box'); if(!box) return;
-            const div = document.createElement('div');
-            div.className = `msg ${m.sender === document.getElementById('nick-field').value ? 'sent' : 'received'}`;
-            div.innerHTML = `<small><b>${m.sender}</b></small><br>${m.text}`;
-            box.appendChild(div); box.scrollTop = box.scrollHeight;
-        });
-
-        document.getElementById('form-register').addEventListener('submit', function(e){
-            e.preventDefault();
-            let fd = new FormData(this); fd.append('action', 'register');
-            fetch(sheetURL, { method: 'POST', body: fd }).then(res => res.text()).then(t => { alert(t); location.reload(); });
-        });
-
-        document.getElementById('form-event').addEventListener('submit', function(e){
-            e.preventDefault();
-            let fd = new FormData(this); fd.append('action', 'submit');
-            fetch(sheetURL, { method: 'POST', body: fd }).then(() => alert("Pendaftaran Berhasil!"));
-        });
-
-        function initChart() {
-            new Chart(document.getElementById('leaderChart'), {
-                type: 'bar',
-                data: { labels: ['Solo', 'Gorontalo', 'Bandung'], datasets: [{ label: 'Point', data: [151, 146, 146], backgroundColor: '#ffcc00' }] },
-                options: { maintainAspectRatio: false, scales: { y: { ticks: { color: '#fff' } } } }
-            });
-        }
-
-        window.onload = () => {
-            const logged = localStorage.getItem('ffca_logged');
-            if(logged === 'true') enterApp(localStorage.getItem('ffca_nick'));
-        }
-    </script>
-</body>
-</html>
+            const
